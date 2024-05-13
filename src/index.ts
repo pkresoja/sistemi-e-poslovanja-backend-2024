@@ -3,7 +3,13 @@ import cors from 'cors'
 import morgan from 'morgan'
 import { configDotenv } from 'dotenv'
 import { AppDataSource } from './db'
-import { ServiceService } from './services/service.service'
+import { TypeRoute } from './routes/type.route'
+import { StateRoute } from './routes/state.route'
+import { ServiceRoute } from './routes/service.route'
+import { ModelRoute } from './routes/model.route'
+import { ManufacturerRoute } from './routes/manufacturer.route'
+import { DeviceRoute } from './routes/device.route'
+import { CustomerRoute } from './routes/customer.route'
 
 const app = express()
 app.use(express.json())
@@ -19,9 +25,13 @@ AppDataSource.initialize().then(() => {
     })
 }).catch((e) => console.log(e))
 
-app.get('/', async (req, res) => {
-    res.json(await ServiceService.getServiceByCode('Q123'))
-})
+app.use('/api/customer', CustomerRoute)
+app.use('/api/device', DeviceRoute)
+app.use('/api/manufacturer', ManufacturerRoute)
+app.use('/api/model', ModelRoute)
+app.use('/api/service', ServiceRoute)
+app.use('/api/state', StateRoute)
+app.use('/api/type', TypeRoute)
 
 app.get("*", (req, res) => {
     res.status(404).json({
