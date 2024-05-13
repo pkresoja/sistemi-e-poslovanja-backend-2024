@@ -3,6 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import { configDotenv } from 'dotenv'
 import { AppDataSource } from './db'
+import { ServiceService } from './services/service.service'
 
 const app = express()
 app.use(express.json())
@@ -18,10 +19,8 @@ AppDataSource.initialize().then(() => {
     })
 }).catch((e) => console.log(e))
 
-app.get('/', (req, res) => {
-    res.json({
-        message: "Hello World From ExpressJS and TypeScript!"
-    })
+app.get('/', async (req, res) => {
+    res.json(await ServiceService.getServiceByCode('Q123'))
 })
 
 app.get("*", (req, res) => {

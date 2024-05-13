@@ -14,10 +14,14 @@ import { State } from "./State";
 @Index("fk_service_device_idx", ["deviceId"], {})
 @Index("fk_service_state_idx", ["stateId"], {})
 @Index("fk_service_updated_by_idx", ["updatedBy"], {})
+@Index("uq_service_code", ["code"], { unique: true })
 @Entity("service", { schema: "tf_psep_2024" })
 export class Service {
   @PrimaryGeneratedColumn({ type: "int", name: "service_id", unsigned: true })
   serviceId: number;
+
+  @Column("varchar", { name: "code", unique: true, length: 255 })
+  code: string;
 
   @Column("int", { name: "device_id", unsigned: true })
   deviceId: number;
@@ -40,12 +44,12 @@ export class Service {
   @Column("datetime", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @ManyToOne(() => User, (user) => user.services, {
+  @ManyToOne(() => User, (user) => user.createdServices, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "created_by", referencedColumnName: "userId" }])
-  createdBy2: User;
+  createdByUser: User;
 
   @ManyToOne(() => Device, (device) => device.services, {
     onDelete: "CASCADE",
@@ -61,10 +65,10 @@ export class Service {
   @JoinColumn([{ name: "state_id", referencedColumnName: "stateId" }])
   state: State;
 
-  @ManyToOne(() => User, (user) => user.services2, {
+  @ManyToOne(() => User, (user) => user.updatedServies, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "updated_by", referencedColumnName: "userId" }])
-  updatedBy2: User;
+  updatedByUser: User;
 }

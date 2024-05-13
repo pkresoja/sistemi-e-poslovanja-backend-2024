@@ -28,9 +28,9 @@ export class User {
   @Column("bool", { name: "active", default: () => "'true'" })
   active: boolean;
 
-  @OneToMany(() => Service, (service) => service.createdBy2)
-  services: Service[];
+  @OneToMany(() => Service, (service) => service.createdByUser)
+  createdServices: Service[];
 
-  @OneToMany(() => Service, (service) => service.updatedBy2)
-  services2: Service[];
+  @OneToMany(() => Service, (service) => service.updatedByUser)
+  updatedServies: Service[];
 }
