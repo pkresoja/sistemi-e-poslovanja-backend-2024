@@ -2,6 +2,7 @@ import { IsNull } from "typeorm";
 import { AppDataSource } from "../db";
 import { Customer } from "../entities/Customer";
 import { CustomerModel } from "../models/customer.model";
+import { checkIfDefined } from "../utils";
 
 const repo = AppDataSource.getRepository(Customer)
 
@@ -40,23 +41,17 @@ export class CustomerService {
             }
         })
 
-        if (data == undefined)
-            throw new Error("NOT_FOUND")
-
-        return data
+        return checkIfDefined(data)
     }
 
     static async createCustomer(model: CustomerModel) {
-        const data = await repo.save({
+        return await repo.save({
             name: model.name,
             email: model.email,
             phone: model.phone,
             taxId: model.taxId,
             createdAt: new Date()
         })
-
-        delete data.deletedAt
-        return data
     }
 
     static async updateCustomer(id: number, model: CustomerModel) {
@@ -66,9 +61,7 @@ export class CustomerService {
         data.phone = model.phone
         data.taxId = model.taxId
         data.updatedAt = new Date()
-
-        delete data.deletedAt
-        return data
+        return await repo.save(data)
     }
 
     static async deleteCustomerById(id: number) {

@@ -2,6 +2,7 @@ import { IsNull } from "typeorm";
 import { AppDataSource } from "../db";
 import { State } from "../entities/State";
 import { NameModel } from "../models/name.model";
+import { checkIfDefined } from "../utils";
 
 const repo = AppDataSource.getRepository(State)
 
@@ -34,30 +35,21 @@ export class StateService {
             }
         })
 
-        if (data == undefined)
-            throw new Error("NOT_FOUND")
-
-        return data
+        return checkIfDefined(data)
     }
 
     static async createState(model: NameModel) {
-        const data = await repo.save({
+        return await repo.save({
             name: model.name,
             createdAt: new Date()
         })
-
-        delete data.deletedAt;
-        return data
     }
 
     static async updateState(id: number, model: NameModel) {
         const data = await this.getStateById(id)
         data.name = model.name
         data.updatedAt = new Date()
-
-        const newData = await repo.save(data)
-        delete newData.deletedAt;
-        return newData
+        return await repo.save(data)
     }
 
     static async deleteStateById(id: number) {

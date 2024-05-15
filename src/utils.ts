@@ -7,6 +7,8 @@ export async function handleRequest(res: Response, callback: Promise<any>) {
             res.status(204).send()
             return
         }
+
+        delete data.deletedAt
         res.json(data)
     } catch (e) {
         let code = 500
@@ -19,4 +21,10 @@ export async function handleRequest(res: Response, callback: Promise<any>) {
             timestamp: new Date()
         })
     }
+}
+
+export function checkIfDefined(data: any) {
+    if (data == undefined)
+        throw new Error("NOT_FOUND")
+    return data
 }
