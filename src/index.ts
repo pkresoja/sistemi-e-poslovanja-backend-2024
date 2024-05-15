@@ -10,6 +10,7 @@ import { ModelRoute } from './routes/model.route'
 import { ManufacturerRoute } from './routes/manufacturer.route'
 import { DeviceRoute } from './routes/device.route'
 import { CustomerRoute } from './routes/customer.route'
+import { Timestamp } from 'typeorm'
 
 const app = express()
 app.use(express.json())
@@ -35,6 +36,28 @@ app.use('/api/type', TypeRoute)
 
 app.get("*", (req, res) => {
     res.status(404).json({
-        message: "Not found!"
+        message: "NOT_FOUND",
+        timestamp: new Date()
+    })
+})
+
+app.post("*", (req, res) => {
+    res.status(501).json({
+        message: "NOT_IMPLEMENTED",
+        timestamp: new Date()
+    })
+})
+
+app.put("*", (req, res) => {
+    res.status(501).json({
+        message: "NOT_IMPLEMENTED",
+        timestamp: new Date()
+    })
+})
+
+app.delete("*", (req, res) => {
+    res.status(501).json({
+        message: "NOT_IMPLEMENTED",
+        timestamp: new Date()
     })
 })
