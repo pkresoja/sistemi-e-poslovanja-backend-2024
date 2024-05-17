@@ -8,11 +8,6 @@ ModelRoute.get('/', (req, res) => {
     handleRequest(res, ModelService.getAllModels())
 })
 
-ModelRoute.get('/:id/simple', (req, res) => {
-    const id = req.params.id as any as number
-    handleRequest(res, ModelService.getModelWithoutRelationsById(id))
-})
-
 ModelRoute.get('/:id', (req, res) => {
     const id = req.params.id as any as number
     handleRequest(res, ModelService.getModelById(id))

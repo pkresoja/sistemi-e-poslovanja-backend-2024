@@ -39,41 +39,6 @@ export class ModelService {
         })
     }
 
-    static async getModelById(id: number) {
-        const data = await repo.findOne({
-            select: {
-                modelId: true,
-                name: true,
-                createdAt: true,
-                updatedAt: true,
-                type: {
-                    typeId: true,
-                    name: true
-                },
-                manufacturer: {
-                    manufacturerId: true,
-                    name: true
-                }
-            },
-            where: {
-                type: {
-                    deletedAt: IsNull()
-                },
-                manufacturer: {
-                    deletedAt: IsNull()
-                },
-                modelId: id,
-                deletedAt: IsNull()
-            },
-            relations: {
-                type: true,
-                manufacturer: true
-            }
-        })
-
-        return checkIfDefined(data)
-    }
-
     static async createModel(model: ModelModel) {
         return await repo.save({
             name: model.name,
@@ -83,7 +48,7 @@ export class ModelService {
         })
     }
 
-    static async getModelWithoutRelationsById(id: number) {
+    static async getModelById(id: number) {
         const data = await repo.findOne({
             select: {
                 modelId: true,
@@ -109,7 +74,7 @@ export class ModelService {
     }
 
     static async updateModel(id: number, model: ModelModel) {
-        const data: Model = await this.getModelWithoutRelationsById(id)
+        const data: Model = await this.getModelById(id)
         data.name = model.name
         data.updatedAt = new Date()
         data.typeId = model.typeId
@@ -118,7 +83,7 @@ export class ModelService {
     }
 
     static async deleteModelById(id: number) {
-        const data: Model = await this.getModelWithoutRelationsById(id)
+        const data: Model = await this.getModelById(id)
         data.deletedAt = new Date()
         await repo.save(data)
     }

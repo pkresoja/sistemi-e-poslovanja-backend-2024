@@ -57,58 +57,6 @@ export class DeviceService {
             select: {
                 deviceId: true,
                 sn: true,
-                createdAt: true,
-                updatedAt: true,
-                model: {
-                    modelId: true,
-                    name: true,
-                    type: {
-                        typeId: true,
-                        name: true
-                    },
-                    manufacturer: {
-                        manufacturerId: true,
-                        name: true
-                    }
-                },
-                customer: {
-                    customerId: true,
-                    name: true
-                }
-            },
-            where: {
-                model: {
-                    type: {
-                        deletedAt: IsNull()
-                    },
-                    manufacturer: {
-                        deletedAt: IsNull()
-                    },
-                    deletedAt: IsNull()
-                },
-                customer: {
-                    deletedAt: IsNull()
-                },
-                deviceId: id,
-                deletedAt: IsNull()
-            },
-            relations: {
-                model: {
-                    type: true,
-                    manufacturer: true
-                },
-                customer: true
-            }
-        })
-
-        return checkIfDefined(data)
-    }
-
-    static async getDeviceWithoutRelationsById(id: number) {
-        const data = await repo.findOne({
-            select: {
-                deviceId: true,
-                sn: true,
                 modelId: true,
                 customerId: true,
                 createdAt: true,
@@ -145,7 +93,7 @@ export class DeviceService {
     }
 
     static async updateDevice(id: number, model: DeviceModel) {
-        const data: Device = await this.getDeviceWithoutRelationsById(id)
+        const data: Device = await this.getDeviceById(id)
         data.sn = model.sn
         data.modelId = model.modelId
         data.customerId = model.customerId
@@ -154,7 +102,7 @@ export class DeviceService {
     }
 
     static async deleteDeviceById(id: number) {
-        const data: Device = await this.getDeviceWithoutRelationsById(id)
+        const data: Device = await this.getDeviceById(id)
         data.deletedAt = new Date()
         await repo.save(data)
     }

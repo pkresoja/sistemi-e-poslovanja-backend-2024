@@ -9,11 +9,6 @@ DeviceRoute.get('/customer/:id', (req, res) => {
     handleRequest(res, DeviceService.getAllDevicesByCustomerId(id))
 })
 
-DeviceRoute.get('/:id/simple', (req, res) => {
-    const id = req.params.id as any as number
-    handleRequest(res, DeviceService.getDeviceWithoutRelationsById(id))
-})
-
 DeviceRoute.get('/:id', (req, res) => {
     const id = req.params.id as any as number
     handleRequest(res, DeviceService.getDeviceById(id))
