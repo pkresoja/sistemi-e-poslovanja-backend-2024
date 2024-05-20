@@ -10,7 +10,8 @@ import { ModelRoute } from './routes/model.route'
 import { ManufacturerRoute } from './routes/manufacturer.route'
 import { DeviceRoute } from './routes/device.route'
 import { CustomerRoute } from './routes/customer.route'
-import { Timestamp } from 'typeorm'
+import { UserRoute } from './routes/user.route'
+import { authenticateToken } from './utils'
 
 const app = express()
 app.use(express.json())
@@ -26,6 +27,8 @@ AppDataSource.initialize().then(() => {
     })
 }).catch((e) => console.log(e))
 
+app.use(authenticateToken)
+app.use('/api/user', UserRoute)
 app.use('/api/customer', CustomerRoute)
 app.use('/api/device', DeviceRoute)
 app.use('/api/manufacturer', ManufacturerRoute)
