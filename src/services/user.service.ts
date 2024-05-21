@@ -16,10 +16,10 @@ const refreshExpire = process.env.REFRESH_TOKEN_TTL;
 
 export class UserService {
     static async login(model: LoginModel) {
-        const user: User = await this.getUserByUsername(model.username)
+        const user = await this.getUserByUsername(model.username)
         // console.log(bcrypt.hashSync(model.password, 10))
-        if (await bcrypt.compareSync(model.password, user.password)) {
-            return {msg:"hi"}
+        const matches = await bcrypt.compare(model.password, user.password); 
+        if (matches) {
             return {
                 access: jwt.sign({ name: user.username }, accessSecret, { expiresIn: accessExpire }),
                 refresh: jwt.sign({ name: user.username }, refreshSecret, { expiresIn: refreshExpire })
@@ -41,7 +41,7 @@ export class UserService {
     }
 
     static async getUserByUsername(username: string) {
-        const data = await repo.find({
+        const data = await repo.findOne({
             where: {
                 active: true,
                 username: username

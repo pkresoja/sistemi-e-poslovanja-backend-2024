@@ -25,7 +25,7 @@ export async function handleRequest(res: Response, callback: Promise<any>) {
     }
 }
 
-export function checkIfDefined(data: any) {
+export function checkIfDefined<T>(data: T) {
     if (data == undefined)
         throw new Error("NOT_FOUND")
     return data
