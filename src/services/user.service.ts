@@ -21,6 +21,7 @@ export class UserService {
         const matches = await bcrypt.compare(model.password, user.password); 
         if (matches) {
             return {
+                username: user.username,
                 access: jwt.sign({ name: user.username }, accessSecret, { expiresIn: accessExpire }),
                 refresh: jwt.sign({ name: user.username }, refreshSecret, { expiresIn: refreshExpire })
             };
@@ -32,6 +33,7 @@ export class UserService {
         try {
             const decoded: any = jwt.verify(refresh, refreshSecret as string)
             return {
+                username: decoded.name,
                 access: jwt.sign({ name: decoded.name }, accessSecret, { expiresIn: accessExpire }),
                 refresh: refresh
             }
