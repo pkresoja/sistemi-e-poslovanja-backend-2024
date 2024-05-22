@@ -2,6 +2,8 @@ import { IsNull } from "typeorm";
 import { AppDataSource } from "../db";
 import { Service } from "../entities/Service";
 import { checkIfDefined } from "../utils";
+import { ServiceModel } from "../models/service.model";
+import { UserService } from "./user.service";
 
 const repo = AppDataSource.getRepository(Service)
 
@@ -71,7 +73,7 @@ export class ServiceService {
                             name: true
                         }
                     },
-                    customer:{
+                    customer: {
                         name: true,
                         taxId: true
                     }
@@ -106,7 +108,7 @@ export class ServiceService {
             },
             relations: {
                 state: true,
-                device:{
+                device: {
                     model: {
                         manufacturer: true,
                         type: true
@@ -153,5 +155,33 @@ export class ServiceService {
         })
 
         return checkIfDefined(data)
+    }
+
+    static async createService(model: ServiceModel, username: string) {
+        const user = await UserService.getUserByUsername(username)
+        console.log(user)
+        return await repo.save({
+            code: new Date().getMilliseconds().toString(),
+            deviceId: model.deviceId,
+            stateId: model.stateId,
+            createdAt: new Date(),
+            createdBy: user.userId
+        })
+    }
+
+    static async updateService(id: number, model: ServiceModel, username: string) {
+        const user = await UserService.getUserByUsername(username)
+        const data = await this.getServiceById(id)
+        data.deviceId = model.deviceId
+        data.stateId = model.stateId
+        data.updatedAt = new Date()
+        data.updatedBy = user.userId
+        return await repo.save(data)
+    }
+
+    static async deleteService(id: number) {
+        const data = await this.getServiceById(id)
+        data.deletedAt = new Date()
+        await repo.save(data)
     }
 }

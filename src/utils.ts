@@ -1,6 +1,7 @@
 import { configDotenv } from "dotenv"
 import type { Response } from "express"
 import jwt from "jsonwebtoken"
+import { RequestModel } from "./models/request.model"
 
 export async function handleRequest(res: Response, callback: Promise<any>) {
     try {
@@ -39,7 +40,7 @@ export function sendErrorResponse(res: Response, code = 400, msg = "Bad request"
 }
 
 configDotenv()
-export async function authenticateToken(req, res, next) {
+export async function authenticateToken(req : RequestModel, res: Response, next: Function) {
     const unprotected = ['/api/user/login', '/api/user/refresh']
     if (unprotected.includes(req.path)) {
         next()
@@ -57,7 +58,7 @@ export async function authenticateToken(req, res, next) {
         if (err) {
             return sendErrorResponse(res, 403, 'INVALID_TOKEN')
         }
-        req.user = user
+        req.user = user.name
         next()
     })
 }
