@@ -85,7 +85,7 @@ export class DeviceService {
 
     static async createDevice(model: DeviceModel) {
         return await repo.save({
-            sn: model.sn,
+            sn: model.sn.toUpperCase(),
             modelId: model.modelId,
             customerId: model.customerId,
             createdAt: new Date()

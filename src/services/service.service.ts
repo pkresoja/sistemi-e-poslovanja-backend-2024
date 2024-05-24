@@ -12,6 +12,7 @@ export class ServiceService {
         return await repo.find({
             select: {
                 serviceId: true,
+                code: true,
                 state: {
                     stateId: true,
                     name: true
@@ -125,11 +126,71 @@ export class ServiceService {
         const data = await repo.findOne({
             select: {
                 serviceId: true,
+                code: true,
                 deviceId: true,
                 stateId: true,
                 createdAt: true,
                 updatedAt: true,
+                device: {
+                    deviceId: true,
+                    customerId: true
+                },
+                createdByUser: {
+                    userId: true,
+                    username: true
+                },
+                updatedByUser: {
+                    userId: true,
+                    username: true
+                }
             },
+            where: {
+                device: {
+                    model: {
+                        type: {
+                            deletedAt: IsNull()
+                        },
+                        manufacturer: {
+                            deletedAt: IsNull()
+                        },
+                        deletedAt: IsNull()
+                    },
+                    customer: {
+                        deletedAt: IsNull()
+                    },
+                    deletedAt: IsNull()
+                },
+                state: {
+                    deletedAt: IsNull()
+                },
+                serviceId: id,
+                deletedAt: IsNull()
+            },
+            relations: {
+                device: true,
+                createdByUser: true,
+                updatedByUser: true
+            }
+        })
+
+        return checkIfDefined(data)
+    }
+
+    static async createService(model: ServiceModel, username: string) {
+        const user = await UserService.getUserByUsername(username)
+        console.log(user)
+        return await repo.save({
+            code: Date.now().toString(),
+            deviceId: model.deviceId,
+            stateId: model.stateId,
+            createdAt: new Date(),
+            createdBy: user.userId
+        })
+    }
+
+    static async updateService(id: number, model: ServiceModel, username: string) {
+        const user = await UserService.getUserByUsername(username)
+        const data = await repo.findOne({
             where: {
                 device: {
                     model: {
@@ -153,27 +214,8 @@ export class ServiceService {
                 deletedAt: IsNull()
             }
         })
-
-        return checkIfDefined(data)
-    }
-
-    static async createService(model: ServiceModel, username: string) {
-        const user = await UserService.getUserByUsername(username)
-        console.log(user)
-        return await repo.save({
-            code: new Date().getMilliseconds().toString(),
-            deviceId: model.deviceId,
-            stateId: model.stateId,
-            createdAt: new Date(),
-            createdBy: user.userId
-        })
-    }
-
-    static async updateService(id: number, model: ServiceModel, username: string) {
-        const user = await UserService.getUserByUsername(username)
-        const data = await this.getServiceById(id)
-        data.deviceId = model.deviceId
         data.stateId = model.stateId
+        data.deviceId = model.deviceId
         data.updatedAt = new Date()
         data.updatedBy = user.userId
         return await repo.save(data)
